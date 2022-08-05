@@ -137,6 +137,8 @@ function saveTodos(todos: Todo[]) {
 
 // === components ====================================================
 
+// --- Header --------------------------------------------------------
+
 function Header() {
   const s = mutable({ title: '' });
   const onInput = (ev: any) => (s.title = ev.target.value);
@@ -167,6 +169,8 @@ function Header() {
     </header>
   );
 }
+
+// --- TodoItem ------------------------------------------------------
 
 function TodoItem(p: {
   todo: Todo; //
@@ -241,6 +245,8 @@ function TodoItem(p: {
   };
 }
 
+// --- Main ----------------------------------------------------------
+
 function Main() {
   const onChange = () =>
     store.setAllCompleted(!store.todos.every((todo) => todo.completed));
@@ -268,6 +274,8 @@ function Main() {
     );
   };
 }
+
+// --- Filters -------------------------------------------------------
 
 function Filters() {
   return (
@@ -297,6 +305,8 @@ function Filters() {
   );
 }
 
+// --- Footer --------------------------------------------------------
+
 function Footer() {
   const onClearCompletedClick = () => store.deleteCompleted();
 
@@ -320,6 +330,8 @@ function Footer() {
     );
   };
 }
+
+// --- App -----------------------------------------------------------
 
 function App() {
   return (
