@@ -69,7 +69,7 @@ function Counter(props: {
   }));
 
   const [s, set] = stateObj({
-    count: props.initialCount
+    count: p.initialCount
   });
 
   const onIncrement = () => set.count((it) => it + 1);
