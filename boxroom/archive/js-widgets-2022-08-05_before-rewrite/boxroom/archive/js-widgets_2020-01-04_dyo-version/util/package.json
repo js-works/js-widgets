@@ -1,0 +1,5 @@
+{
+  "name": "js-widgets.util",
+  "typings": "../dist/types/util/main/index.d.ts",
+  "main": "./index.js"
+}

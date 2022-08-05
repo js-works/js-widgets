@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "es2020",
+    "moduleResolution": "Node",
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "downlevelIteration": true,
+    "sourceMap": false,
+    "lib": ["es2020", "dom"],
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node", "mocha", "chai"],
+    "paths": {
+      "preactive/hooks": ["src/main/hooks.ts"],
+      "preactive/ext": ["src/main/ext.ts"],
+      "preactive/util": ["src/main/util.ts"],
+      "preactive": ["./src/main/core.ts"]
+    }
+  },
+  "files": [
+    "src/main/core.ts",
+    "src/main/hooks.ts",
+    "src/main/ext.ts",
+    "src/main/util.ts",
+    "src/main/mobx-tools.ts"
+  ],
+  "include": ["./src/main/*.ts"],
+  "exclude": ["node_modules"]
+}

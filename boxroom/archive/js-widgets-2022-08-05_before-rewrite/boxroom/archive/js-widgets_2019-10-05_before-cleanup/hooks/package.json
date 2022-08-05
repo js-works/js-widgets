@@ -1,0 +1,5 @@
+{
+  "name": "js-widgets.hooks",
+  "typings": "../dist/types/hooks/main/index.d.ts",
+  "main": "./index.js"
+}

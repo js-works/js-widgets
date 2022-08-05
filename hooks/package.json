@@ -1,0 +1,7 @@
+{
+  "name": "js-widgets-hooks",
+  "version": "0.0.1",
+  "types": "../dist/types/hooks.d.ts",
+  "main": "../dist/js-widgets.hooks.cjs.js",
+  "module": "../dist/js-widgets.hooks.esm.js"
+}

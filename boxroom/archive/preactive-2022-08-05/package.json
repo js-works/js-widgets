@@ -1,0 +1,129 @@
+{
+  "name": "preactive",
+  "version": "0.0.66",
+  "description": "",
+  "main": "dist/preactive.core.cjs.js",
+  "module": "dist/preactive.core.esm.js",
+  "types": "dist/types/core.d.ts",
+  "unpkg": "dist/preactive.core.umd.js",
+  "exports": {
+    ".": {
+      "import": "./dist/preactive.core.esm.js",
+      "require": "./dist/preactive.core.cjs.js",
+      "umd": "./dist/preactive.core.umd.js",
+      "types": "./dist/types/core.d.ts"
+    },
+    "./hooks": {
+      "import": "./dist/preactive.hooks.esm.js",
+      "require": "./dist/preactive.hooks.cjs.js",
+      "umd": "./dist/preactive.hooks.umd.js",
+      "types": "./dist/types/hooks.d.ts"
+    },
+    "./ext": {
+      "import": "./dist/preactive.ext.esm.js",
+      "require": "./dist/preactive.ext.cjs.js",
+      "umd": "./dist/preactive.ext.umd.js",
+      "types": "./dist/types/ext.d.ts"
+    },
+    "./util": {
+      "import": "./dist/preactive.util.esm.js",
+      "require": "./dist/preactive.util.cjs.js",
+      "umd": "./dist/preactive.util.umd.js",
+      "types": "./dist/types/util.d.ts"
+    },
+    "./mobx-tools": {
+      "import": "./dist/preactive.mobx-tools.esm.js",
+      "require": "./dist/preactive.mobx-tools.cjs.js",
+      "umd": "./dist/preactive.mobx-tools.umd.js",
+      "types": "./dist/types/mobx-tools.d.ts"
+    }
+  },
+  "files": [
+    "src",
+    "dist",
+    "hooks",
+    "ext",
+    "util",
+    "mobx-tools"
+  ],
+  "scripts": {
+    "clean": "shx rm -rf dist build",
+    "test": "echo \"Error: no tests specified\" && exit 1",
+    "storybook": "start-storybook -p 6006",
+    "todomvc": "rollup --w --c src/demos/todomvc/config/todomvc-rollup.config.js",
+    "build-storybook": "build-storybook",
+    "build": "rollup --c rollup.config.js && tsc -d --project ./tsconfig.build.json --emitDeclarationOnly --declarationDir dist/types",
+    "zip-source": "shx rm -rf ./build/source && shx mkdir -p ./build/source && copyfiles -a ./* ./.storybook ./build/source && shx cp -r ./src ./build/source && shx cp -r ./.storybook ./build/source/.storybook && shx mkdir -p ./dist/source && cd build && bestzip --force node ../dist/source/source.zip source && cd ..",
+    "dist": "npm run clean && npm run build && npm run zip-source"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/js-works/preactive.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/js-works/preactive/issues"
+  },
+  "homepage": "https://github.com/js-works/preactive#readme",
+  "dependencies": {
+    "mobx": "^6.6.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.10",
+    "@babel/plugin-transform-classes": "^7.18.9",
+    "@babel/plugin-transform-react-jsx": "^7.18.10",
+    "@babel/plugin-transform-typescript": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
+    "@babel/preset-typescript": "^7.18.6",
+    "@reduxjs/toolkit": "^1.8.3",
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-replace": "^4.0.0",
+    "@rollup/plugin-typescript": "^8.3.4",
+    "@storybook/addon-actions": "^6.5.10",
+    "@storybook/addon-essentials": "^6.5.10",
+    "@storybook/addon-interactions": "^6.5.10",
+    "@storybook/addon-links": "^6.5.10",
+    "@storybook/builder-webpack4": "^6.5.10",
+    "@storybook/html": "^6.5.10",
+    "@storybook/manager-webpack4": "^6.5.10",
+    "@storybook/preact": "^6.5.10",
+    "@storybook/testing-library": "^0.0.13",
+    "@types/chai": "^4.3.1",
+    "@types/classnames": "^2.3.1",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "^18.6.3",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.5",
+    "babel-preset-es2015": "^6.24.1",
+    "bestzip": "^2.2.1",
+    "copyfiles": "^2.4.1",
+    "core-js": "^3.24.1",
+    "eslint": "^8.21.0",
+    "eslint-plugin-react": "^7.30.1",
+    "history": "5.3.0",
+    "js-immutables": "0.0.5",
+    "js-spec": "^0.1.79",
+    "lit": "^2.2.8",
+    "preact": "^10.10.0",
+    "preact-router": "^4.1.0",
+    "rollup": "^2.77.2",
+    "rollup-plugin-alias": "^2.2.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-gzip": "^3.0.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-serve": "^2.0.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.32.1",
+    "shx": "^0.3.4",
+    "storybook-addon-jsx": "^7.3.14",
+    "ts": "^0.2.2",
+    "ts-loader": "^9.3.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
+  }
+}

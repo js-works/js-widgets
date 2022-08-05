@@ -1,0 +1,7 @@
+{
+  "name": "preactive-ext",
+  "version": "0.0.1",
+  "types": "../dist/types/ext.d.ts",
+  "main": "../dist/preactive.ext.cjs.js",
+  "module": "../dist/preactive.ext.esm.js"
+}

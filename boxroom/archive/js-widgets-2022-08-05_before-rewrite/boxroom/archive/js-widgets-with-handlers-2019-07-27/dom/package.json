@@ -1,0 +1,5 @@
+{
+  "name": "js-widgets/dom",
+  "typings": "../dist/types/dom/main/index.d.ts",
+  "main": "./index.js"
+}

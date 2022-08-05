@@ -1,0 +1,20 @@
+{
+  "version": "0.2",
+  "words": [
+    "autorun", //
+    "preact",
+    "preactive",
+    "todoapp",
+    "todomvc",
+    "todos"
+  ],
+  "ignorePaths": [
+    "package.json",
+    "package-lock.json",
+    "yarn.log",
+    ".vscode/**",
+    "**/*.min.js"
+  ],
+  "ignoreRegExpList": [],
+  "useGitignore": true
+}

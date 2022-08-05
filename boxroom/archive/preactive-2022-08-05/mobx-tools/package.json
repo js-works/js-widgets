@@ -1,0 +1,7 @@
+{
+  "name": "preactive-mobx-tools",
+  "version": "0.0.1",
+  "types": "../dist/types/mobx-tools.d.ts",
+  "main": "../dist/preactive.mobx-tools.cjs.js",
+  "module": "../dist/preactive.mobx-tools.esm.js"
+}

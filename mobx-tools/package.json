@@ -1,0 +1,7 @@
+{
+  "name": "js-widgets-mobx-tools",
+  "version": "0.0.1",
+  "types": "../dist/types/mobx-tools.d.ts",
+  "main": "../dist/js-widgets.mobx-tools.cjs.js",
+  "module": "../dist/js-widgets.mobx-tools.esm.js"
+}

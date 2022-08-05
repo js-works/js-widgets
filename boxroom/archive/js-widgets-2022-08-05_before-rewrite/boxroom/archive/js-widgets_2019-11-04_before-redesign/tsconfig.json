@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "strict": true,
+    "strictNullChecks": true,
+    "jsx": "react",
+    "jsxFactory": "h",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "downlevelIteration": true,
+    "sourceMap": true, 
+    "lib": ["es7", "dom"],
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    
+    "paths": {
+      "js-widgets/core": ["src/modules/core/main/index.ts"],
+      "js-widgets/util": ["src/modules/util/main/index.ts"]
+    },
+    
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+
+    "types": [
+      "node", "mocha", "chai"
+    ]
+  },
+  "files": [
+    "src/modules/root/main/index.ts",
+    "src/modules/core/main/index.ts",
+    "src/modules/html/main/index.ts",
+    "src/modules/svg/main/index.ts",
+    "src/modules/util/main/index.ts",
+    "src/modules/all/main/index.ts"
+  ],
+
+  "include": [
+    "./src/modules/*/main/**/*.ts*"
+  ],
+
+  "exclude": [
+    "node_modules/dyo/typings/index.d.ts"
+  ]
+}

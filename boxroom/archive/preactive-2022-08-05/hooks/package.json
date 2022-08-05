@@ -1,0 +1,7 @@
+{
+  "name": "preactive-hooks",
+  "version": "0.0.1",
+  "types": "../dist/types/hooks.d.ts",
+  "main": "../dist/preactive.hooks.cjs.js",
+  "module": "../dist/preactive.hooks.esm.js"
+}

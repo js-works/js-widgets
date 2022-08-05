@@ -1,0 +1,7 @@
+{
+  "name": "preactive-util",
+  "version": "0.0.1",
+  "types": "../dist/types/util.d.ts",
+  "main": "../dist/preactive.util.cjs.js",
+  "module": "../dist/preactive.util.esm.js"
+}

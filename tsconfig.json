@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "es2020",
+    "moduleResolution": "Node",
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "downlevelIteration": true,
+    "sourceMap": false,
+    "lib": ["es2020", "dom"],
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node", "mocha", "chai"],
+    "paths": {
+      "js-widgets/hooks": ["src/main/hooks.ts"],
+      "js-widgets/ext": ["src/main/ext.ts"],
+      "js-widgets/util": ["src/main/util.ts"],
+      "js-widgets/mobx-tools": ["src/main/mobx-tools.ts"],
+      "js-widgets": ["./src/main/core.ts"]
+    }
+  },
+  "files": [
+    "src/main/core.ts",
+    "src/main/ext.ts",
+    "src/main/util.ts",
+    "src/main/mobx-tools.ts",
+    "src/stories/demo.stories.tsx"
+  ],
+  "include": ["./src/**/*.ts*", "src/demos/todomvc/todomvc-old.xyz"],
+  "exclude": ["node_modules"]
+}
