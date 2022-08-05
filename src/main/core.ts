@@ -21,7 +21,8 @@ export type {
   Context,
   Props,
   PropsOf,
-  RefObject
+  RefObject,
+  VNode
 };
 
 // === global types ==================================================
@@ -454,11 +455,11 @@ function createContext<T>(
   const preactCtx = createPreactContext(defaultValue);
   preactCtx.displayName = `InnerProvider(${name})`;
 
-  class Context {
+  class Ctx {
     static __preactCtx = preactCtx;
   }
 
-  const context = Object.assign(new Context(), {
+  const context = Object.assign(new Ctx(), {
     type: 'context' as const,
     name,
     defaultValue
