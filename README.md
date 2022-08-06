@@ -60,7 +60,7 @@ import { render } from 'js-widgets';
 import { effect, preset, stateObj } from 'js-widgets/ext';
 
 function Counter(props: {
-  initialCount?: number;
+  initialCount?: number; //
   label?: string;
 }) {
   const p = preset(props, () => ({
@@ -74,6 +74,12 @@ function Counter(props: {
 
   const onIncrement = () => set.count((it) => it + 1);
 
+  afterMount(() => {
+    console.log(`Counter "${p.label}" has been mounted`);
+
+    return () => console.log(`Counter "${p.label}" will unmount`);
+  });
+
   effect(
     () => console.log(`Value of "${p.label}": ${s.count}`),
     () => [s.count]
@@ -86,7 +92,7 @@ function Counter(props: {
       </button>
     </div>
   );
-});
+}
 
 render(<Counter />, '#app');
 ```

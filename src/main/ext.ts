@@ -20,6 +20,7 @@ type ContextType<C extends Context<any>> = C extends Context<infer T>
 // === exports =======================================================
 
 export {
+  afterMount,
   consume,
   create,
   createMemo,
@@ -350,6 +351,28 @@ function createMemo<T, A extends any[], G extends () => A>(
   };
 
   return memo;
+}
+
+// --- afterMount ----------------------------------------------------
+
+function afterMount(action: () => void | (() => void)): void {
+  const ctrl = getCtrl();
+  let cleanup: null | (() => void) = null;
+
+  ctrl.afterMount(() => {
+    const result = action();
+
+    if (typeof result === 'function') {
+      cleanup = result;
+    }
+  });
+
+  ctrl.beforeUnmount(() => {
+    if (cleanup) {
+      cleanup();
+      cleanup = null;
+    }
+  });
 }
 
 // --- effect --------------------------------------------------------
