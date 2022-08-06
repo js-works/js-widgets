@@ -21,17 +21,17 @@ function makeComponentsMobxAware() {
   intercept({
     onInit(next, getCtrl) {
       const ctrl = getCtrl(0);
-      const update = ctrl.getUpdater();
       const id = ctrl.getId();
 
-      let reaction = reactionsById[id];
-
-      if (!reaction) {
-        reaction = new Reaction('reaction', () => {
-          update();
-        });
-
+      if (!reactionsById[id]) {
+        const update = ctrl.getUpdater();
+        const reaction = new Reaction('js-widgets::reaction', () => update());
         reactionsById[id] = reaction;
+
+        ctrl.beforeUnmount(() => {
+          reaction.dispose();
+          delete reactionsById[id];
+        });
       }
 
       next();

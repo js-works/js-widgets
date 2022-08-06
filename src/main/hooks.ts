@@ -23,7 +23,7 @@ const hookData: Record<
 // === interception logic ============================================
 
 let getCurrCtrl: ComponentCtrlGetter | null = null;
-let currComponentId = '';
+let currComponentId: string | null = null;
 
 function getCtrl(): ComponentCtrl {
   if (currComponentId) {
@@ -68,7 +68,7 @@ intercept({
       currComponentId = componentId;
       next();
     } finally {
-      currComponentId = '';
+      currComponentId = null;
     }
   }
 });
