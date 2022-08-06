@@ -19,10 +19,9 @@ function makeComponentsMobxAware() {
   const reactionsById: Record<string, Reaction> = {};
 
   intercept({
-    onInit(next, componentId, getCtrl) {
-      const ctrl = getCtrl(0);
-
-      if (!reactionsById[componentId]) {
+    onRender(next, componentId, getCtrl) {
+      if (getCtrl) {
+        const ctrl = getCtrl(0);
         const update = ctrl.getUpdater();
         const reaction = new Reaction('js-widgets::reaction', () => update());
         reactionsById[componentId] = reaction;
@@ -31,13 +30,11 @@ function makeComponentsMobxAware() {
           reaction.dispose();
           delete reactionsById[componentId];
         });
+
+        reaction.track(next);
+      } else {
+        reactionsById[componentId].track(next);
       }
-
-      next();
-    },
-
-    onRender(next, id) {
-      reactionsById[id].track(next);
     }
   });
 }

@@ -22,7 +22,7 @@ const hookData: Record<
 
 // === interception logic ============================================
 
-let getCurrCtrl: ComponentCtrlGetter | null = null;
+let currGetCtrl: ComponentCtrlGetter | null = null;
 let currComponentId: string | null = null;
 
 function getCtrl(): ComponentCtrl {
@@ -34,12 +34,12 @@ function getCtrl(): ComponentCtrl {
     }
   }
 
-  if (!getCurrCtrl) {
+  if (!currGetCtrl) {
     throw Error('Hook has been called outside of component function');
   }
 
   const id = currComponentId!;
-  const ctrl = getCurrCtrl(1);
+  const ctrl = currGetCtrl(1);
 
   if (!ctrlById[id]) {
     ctrlById[id] = ctrl;
@@ -54,21 +54,14 @@ function getCtrl(): ComponentCtrl {
 }
 
 intercept({
-  onInit(next, componentId, getCtrl) {
-    try {
-      getCurrCtrl = getCtrl;
-      next();
-    } finally {
-      getCurrCtrl = null;
-    }
-  },
-
-  onRender(next, componentId) {
+  onRender(next, componentId, getCtrl) {
     try {
       currComponentId = componentId;
+      currGetCtrl = getCtrl;
       next();
     } finally {
       currComponentId = null;
+      currGetCtrl = null;
     }
   }
 });
