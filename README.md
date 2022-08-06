@@ -101,7 +101,16 @@ render(<Counter />, '#app');
 
 ### Core functions
 
-tbd
+- createContext
+- createElement
+- createPortal
+- getType
+- getProps
+- intercept
+- render
+- Boundary
+- Fragment
+- Suspense
 
 ### Extensions
 

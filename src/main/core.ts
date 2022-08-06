@@ -3,11 +3,12 @@ import { options, ComponentClass } from 'preact';
 import {
   createContext as createPreactContext,
   createElement as preactCreateElement,
+  createPortal,
   render as preactRender,
   Component as PreactComponent,
   Fragment,
   JSX,
-  Suspense as PreactSuspense
+  Suspense
 } from 'preact/compat';
 
 import type { VNode } from 'preact';
@@ -17,12 +18,14 @@ import type { VNode } from 'preact';
 export {
   createContext,
   createElement,
+  createPortal,
   getType,
   getProps,
   intercept,
   render,
   Boundary,
-  Fragment
+  Fragment,
+  Suspense
 };
 
 export type {
@@ -567,6 +570,12 @@ function Boundary(props: { fallback: VNode }) {
 
 setProperty(Boundary, '__preactClass', PreactBoundary);
 setName(Boundary, 'Boundary');
+
+// === Suspense ======================================================
+
+setProperty(Suspense, '__component', Suspense);
+setProperty(Suspense, '__preactClass', Suspense);
+setName(Suspense, 'Suspense');
 
 // === virtual elements ==============================================
 
