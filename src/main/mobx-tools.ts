@@ -19,18 +19,17 @@ function makeComponentsMobxAware() {
   const reactionsById: Record<string, Reaction> = {};
 
   intercept({
-    onInit(next, getCtrl) {
+    onInit(next, componentId, getCtrl) {
       const ctrl = getCtrl(0);
-      const id = ctrl.getId();
 
-      if (!reactionsById[id]) {
+      if (!reactionsById[componentId]) {
         const update = ctrl.getUpdater();
         const reaction = new Reaction('js-widgets::reaction', () => update());
-        reactionsById[id] = reaction;
+        reactionsById[componentId] = reaction;
 
         ctrl.beforeUnmount(() => {
           reaction.dispose();
-          delete reactionsById[id];
+          delete reactionsById[componentId];
         });
       }
 

@@ -44,7 +44,6 @@ interface Component<P extends Props> {
 }
 
 interface ComponentCtrl {
-  getId(): string;
   afterMount(task: () => void): void;
   beforeUpdate(task: () => void): void;
   afterUpdate(task: () => void): void;
@@ -93,19 +92,21 @@ let onCreateElement:
   | ((next: () => void, type: string | Function, props: Props) => void)
   | null = null;
 
-let onInit: (next: () => void, getCtrl: ComponentCtrlGetter) => void = (next) =>
-  next();
+let onInit: (
+  next: () => void, //
+  componentId: string,
+  getCtrl: ComponentCtrlGetter
+) => void = (next) => next();
 
-let onRender: (next: () => void, componentId: string) => void = (next) =>
-  next();
+let onRender: (
+  next: () => void,
+  componentId: string,
+  getCtrl: ComponentCtrlGetter | null
+) => void = (next) => next();
 
 // === local classes and functions ===================================
 
 class Controller implements ComponentCtrl {
-  static #nextId = 0;
-
-  #id: string;
-
   preactComponent: BaseComponent<any>;
 
   #lifecycle: Record<LifecycleEvent, Task[]> = {
@@ -122,18 +123,12 @@ class Controller implements ComponentCtrl {
     update: (force?: boolean) => void,
     setLifecycleEventHandler: (handler: LifecycleEventHandler) => void
   ) {
-    Controller.#nextId = (Controller.#nextId + 1) % 2000000000;
-    this.#id = Date.now() + '-' + Controller.#nextId;
     this.preactComponent = component;
     this.#update = update;
 
     setLifecycleEventHandler((eventName) => {
       this.#lifecycle[eventName].forEach((it) => it());
     });
-  }
-
-  getId() {
-    return this.#id;
   }
 
   afterMount(task: Task) {
@@ -184,6 +179,9 @@ class BaseComponent<P extends Props> extends PreactComponent<
   P,
   { dummy: number }
 > {
+  static nextId = 0;
+
+  #id: string;
   #ctrl: ComponentCtrl;
   #emit: null | ((event: LifecycleEvent) => void) = null;
   #mounted = false;
@@ -206,6 +204,9 @@ class BaseComponent<P extends Props> extends PreactComponent<
     super(props);
     this.state = { dummy: 0 };
     this.#main = main;
+
+    this.#id = Date.now() + '-' + BaseComponent.nextId++;
+    BaseComponent.nextId = BaseComponent.nextId % 200000000;
 
     const propsObjClass = class extends Object {
       static __preactClass = this.constructor;
@@ -251,9 +252,10 @@ class BaseComponent<P extends Props> extends PreactComponent<
 
   render() {
     let content: any;
+    let getCtrl: ComponentCtrlGetter | null = null;
 
     if (this.#isFactoryFunction === undefined) {
-      const getCtrl: ComponentCtrlGetter = (intention) => {
+      getCtrl = (intention) => {
         this.#usesExtensions ||= intention === 2;
         this.#usesHooks ||= intention === 1;
 
@@ -268,34 +270,44 @@ class BaseComponent<P extends Props> extends PreactComponent<
         return this.#ctrl;
       };
 
-      onInit(() => {
-        onRender(() => {
-          const result = this.#main(this.#propsObj);
+      onInit(
+        () => {
+          onRender(
+            () => {
+              const result = this.#main(this.#propsObj);
 
-          if (typeof result === 'function') {
-            if (this.#usesHooks) {
-              throw new Error(
-                `Component "${getComponentName(this.constructor)}" ` +
-                  'uses hooks but returns a render function - this is ' +
-                  'not allowed'
-              );
-            }
+              if (typeof result === 'function') {
+                if (this.#usesHooks) {
+                  throw new Error(
+                    `Component "${getComponentName(this.constructor)}" ` +
+                      'uses hooks but returns a render function - this is ' +
+                      'not allowed'
+                  );
+                }
 
-            this.#isFactoryFunction = true;
-            this.#render = result;
-          } else {
-            if (this.#usesExtensions) {
-              throw new Error(
-                `Component "${getComponentName(component)}" uses extensions ` +
-                  'but does not return a render function - this is not allowed'
-              );
-            }
+                this.#isFactoryFunction = true;
+                this.#render = result;
+              } else {
+                if (this.#usesExtensions) {
+                  throw new Error(
+                    `Component "${getComponentName(
+                      component
+                    )}" uses extensions ` +
+                      'but does not return a render function - this is not allowed'
+                  );
+                }
 
-            this.#isFactoryFunction = false;
-            content = result ?? null;
-          }
-        }, this.#ctrl.getId());
-      }, getCtrl);
+                this.#isFactoryFunction = false;
+                content = result ?? null;
+              }
+            },
+            this.#id,
+            this.#mounted ? null : getCtrl
+          );
+        },
+        this.#id,
+        getCtrl
+      );
     }
 
     if (this.#mounted) {
@@ -306,19 +318,27 @@ class BaseComponent<P extends Props> extends PreactComponent<
       let content: any = null;
 
       if (!this.#mounted) {
-        onRender(() => (content = this.#render!()), this.#ctrl.getId());
+        onRender(() => (content = this.#render!()), this.#id, getCtrl);
       } else {
-        onRender(() => {
-          content = this.#render!();
-        }, this.#ctrl.getId());
+        onRender(
+          () => {
+            content = this.#render!();
+          },
+          this.#id,
+          null
+        );
       }
 
       return content;
     } else {
       if (content === undefined) {
-        onRender(() => {
-          content = this.#main(this.#propsObj);
-        }, this.#ctrl.getId());
+        onRender(
+          () => {
+            content = this.#main(this.#propsObj);
+          },
+          this.#id,
+          null
+        );
       }
 
       return content;
@@ -339,8 +359,17 @@ function intercept(params: {
     props: Props
   ): void;
 
-  onInit?(next: () => void, getCtrl: ComponentCtrlGetter): void;
-  onRender?(next: () => void, componentId: string): void;
+  onInit?(
+    next: () => void,
+    componentId: string,
+    getCtrl: ComponentCtrlGetter
+  ): void;
+
+  onRender?(
+    next: () => void,
+    componentId: string,
+    getCtrl: ComponentCtrlGetter | null
+  ): void;
 }) {
   if (params.onCreateElement) {
     if (!onCreateElement) {
@@ -377,16 +406,24 @@ function intercept(params: {
     const oldOnInit = onInit;
     const newOnInit = params.onInit;
 
-    onInit = (next, getCtrl) =>
-      void newOnInit(() => oldOnInit(next, getCtrl), getCtrl);
+    onInit = (next, componentId, getCtrl) =>
+      void newOnInit(
+        () => oldOnInit(next, componentId, getCtrl),
+        componentId,
+        getCtrl
+      );
   }
 
   if (params.onRender) {
     const oldOnRender = onRender;
     const newOnRender = params.onRender;
 
-    onRender = (next, componentId) =>
-      void newOnRender(() => oldOnRender(next, componentId), componentId);
+    onRender = (next, componentId, getCtrl) =>
+      void newOnRender(
+        () => oldOnRender(next, componentId, getCtrl),
+        componentId,
+        getCtrl
+      );
   }
 }
 

@@ -65,7 +65,7 @@ function getCtrl() {
 }
 
 intercept({
-  onInit(next, getCtrl) {
+  onInit(next, componentId, getCtrl) {
     try {
       getCurrCtrl = getCtrl;
       next();

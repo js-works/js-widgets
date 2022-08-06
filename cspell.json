@@ -1,13 +1,15 @@
 {
   "version": "0.2",
   "words": [
-    "autorun", //
+    "autorun",
+    "clazz",
     "js-widgets",
     "jsxs",
     "preact",
     "todoapp",
     "todomvc",
-    "todos"
+    "todos",
+    "vnode"
   ],
   "ignorePaths": [
     "package.json",

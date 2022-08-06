@@ -38,8 +38,8 @@ function getCtrl(): ComponentCtrl {
     throw Error('Hook has been called outside of component function');
   }
 
+  const id = currComponentId!;
   const ctrl = getCurrCtrl(1);
-  const id = ctrl.getId();
 
   if (!ctrlById[id]) {
     ctrlById[id] = ctrl;
@@ -54,7 +54,7 @@ function getCtrl(): ComponentCtrl {
 }
 
 intercept({
-  onInit(next, getCtrl) {
+  onInit(next, componentId, getCtrl) {
     try {
       getCurrCtrl = getCtrl;
       next();
@@ -93,7 +93,7 @@ function hook<T>(
 ): T {
   const ctrl = getCtrl();
 
-  const componentId = ctrl.getId();
+  const componentId = currComponentId!;
   let rec = hookData[componentId];
 
   if (!rec) {
