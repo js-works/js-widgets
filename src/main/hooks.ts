@@ -4,13 +4,16 @@ import { intercept, ComponentCtrl, ComponentCtrlGetter } from 'js-widgets';
 
 export { useEffect, useRef, useState };
 
-// === types =========================================================
+// === local types ===================================================
 
 type Ref<T> = { current: T };
+type StateUpdater<T> = (value: T) => T;
+type StateSetter<T> = (updater: StateUpdater<T>) => void;
 
 // === local data ====================================================
 
-const ctrlById: Record<string, ComponentCtrl> = {};
+let currComponentId: string | null = null;
+let currComponentCtrlGetter: ComponentCtrlGetter | null;
 
 const hookData: Record<
   string,
@@ -22,54 +25,18 @@ const hookData: Record<
 
 // === interception logic ============================================
 
-let currGetCtrl: ComponentCtrlGetter | null = null;
-let currComponentId: string | null = null;
-
-function getCtrl(): ComponentCtrl {
-  if (currComponentId) {
-    const ctrl = ctrlById[currComponentId];
-
-    if (ctrl) {
-      return ctrl;
-    }
-  }
-
-  if (!currGetCtrl) {
-    throw Error('Hook has been called outside of component function');
-  }
-
-  const id = currComponentId!;
-  const ctrl = currGetCtrl(1);
-
-  if (!ctrlById[id]) {
-    ctrlById[id] = ctrl;
-
-    ctrl.beforeUnmount(() => {
-      delete ctrlById[id];
-      delete hookData[id];
-    });
-  }
-
-  return ctrl;
-}
-
 intercept({
-  onRender(next, componentId, getCtrl) {
+  onRender(next, id, getCtrl) {
     try {
-      currComponentId = componentId;
-      currGetCtrl = getCtrl;
+      currComponentId = id;
+      currComponentCtrlGetter = getCtrl;
       next();
     } finally {
       currComponentId = null;
-      currGetCtrl = null;
+      currComponentCtrlGetter = null;
     }
   }
 });
-
-// === types =========================================================
-
-type StateUpdater<T> = (value: T) => T;
-type StateSetter<T> = (updater: StateUpdater<T>) => void;
 
 // === local functions ===============================================
 
@@ -79,24 +46,35 @@ function createRef<T>(value: T) {
 
 function hook<T>(
   action: (
-    ctrl: ComponentCtrl,
+    ctrl: ComponentCtrl | null,
     prevValue: T | undefined,
     isInitialized: boolean
   ) => T
 ): T {
-  const ctrl = getCtrl();
+  if (!currComponentId) {
+    throw new Error(
+      'Hook function has been called outside of component function'
+    );
+  }
 
-  const componentId = currComponentId!;
+  const componentId = currComponentId;
   let rec = hookData[componentId];
+  let ctrl = currComponentCtrlGetter ? currComponentCtrlGetter(1) : null;
 
   if (!rec) {
+    if (!currComponentCtrlGetter) {
+      throw new Error(
+        'Hook function has been called outside of component function'
+      );
+    }
+
     rec = { hookIndex: -1, values: [] };
     hookData[componentId] = rec;
 
     const resetHookIndex = () => void (rec!.hookIndex = -1);
 
-    ctrl.afterMount(resetHookIndex);
-    ctrl.afterUpdate(resetHookIndex);
+    ctrl!.afterMount(resetHookIndex);
+    ctrl!.afterUpdate(resetHookIndex);
   }
 
   const isInitialized = ++rec.hookIndex < rec.values.length;
@@ -135,12 +113,12 @@ function useState<T>(
   value: T
 ): [value: T, setter: (updater: StateUpdater<T>) => void] {
   const data = hook<[T, StateSetter<T>, () => void]>(
-    (ctrl, data, isInitialized) => {
+    (ctrl, data, initialized) => {
       let refresh = data && data[2];
 
-      if (!isInitialized) {
+      if (!initialized) {
         const updaters: StateUpdater<T>[] = [];
-        refresh = ctrl.getUpdater();
+        refresh = ctrl!.getUpdater();
 
         data = [
           value,
@@ -151,7 +129,7 @@ function useState<T>(
           refresh
         ];
 
-        ctrl.beforeUpdate(() => {
+        ctrl!.beforeUpdate(() => {
           try {
             updaters.forEach((updater) => (data![0] = updater(data![0])));
           } finally {
@@ -175,12 +153,12 @@ function useEffect<T extends any[]>(
   const prevDepsRef = useRef<T>();
   const currDepsRef = useRef<T>();
 
-  hook((ctrl, _, isInitialized) => {
+  hook((ctrl, _, initialized) => {
     actionRef.current = action;
     prevDepsRef.current = currDepsRef.current;
     currDepsRef.current = deps;
 
-    if (!isInitialized) {
+    if (!initialized) {
       const task = () => {
         const currDeps = currDepsRef.current;
         const prevDeps = prevDepsRef.current;
@@ -190,8 +168,8 @@ function useEffect<T extends any[]>(
         }
       };
 
-      ctrl.afterMount(task);
-      ctrl.afterUpdate(task);
+      ctrl!.afterMount(task);
+      ctrl!.afterUpdate(task);
     }
   });
 }

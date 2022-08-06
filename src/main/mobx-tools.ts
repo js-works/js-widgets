@@ -5,9 +5,11 @@ import { intercept } from 'js-widgets';
 
 export { makeComponentsMobxAware };
 
-// === makeComponentsMobxAware =======================================
+// === local data ====================================================
 
 let componentsAreMobxAware = false;
+
+// === makeComponentsMobxAware =======================================
 
 function makeComponentsMobxAware() {
   if (componentsAreMobxAware) {
@@ -15,7 +17,6 @@ function makeComponentsMobxAware() {
   }
 
   componentsAreMobxAware = true;
-
   const reactionsById: Record<string, Reaction> = {};
 
   intercept({
