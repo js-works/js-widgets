@@ -1,7 +1,7 @@
-/** @jsx h */
+/* @jsx createElement */
 import { ReactiveControllerHost } from 'lit';
 import { makeAutoObservable } from 'mobx';
-import { createContext, h, RefObject } from 'js-widgets';
+import { createContext, createElement, RefObject } from 'js-widgets';
 import { createRef } from 'js-widgets/util';
 import { makeComponentsMobxAware } from 'js-widgets/mobx-tools';
 import { PropsOf } from 'js-widgets';

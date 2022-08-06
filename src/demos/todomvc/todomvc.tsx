@@ -1,5 +1,5 @@
 /** @jsx h */
-import { h, render } from 'js-widgets';
+import { createElement, render } from 'js-widgets';
 import { effect, mutable } from 'js-widgets/ext';
 import { createRef } from 'js-widgets/util';
 import { makeComponentsMobxAware } from 'js-widgets/mobx-tools';

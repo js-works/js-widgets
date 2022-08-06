@@ -1,19 +1,29 @@
+import { options, ComponentClass } from 'preact';
+
 import {
   createContext as createPreactContext,
-  createElement,
+  createElement as preactCreateElement,
   render as preactRender,
-  options,
   Component as PreactComponent,
-  ComponentClass,
   Fragment,
-  JSX
-} from 'preact';
+  JSX,
+  Suspense as PreactSuspense
+} from 'preact/compat';
 
 import type { VNode } from 'preact';
 
 // === exports =======================================================
 
-export { createContext, h, intercept, render, Fragment };
+export {
+  createContext,
+  createElement,
+  getType,
+  getProps,
+  intercept,
+  render,
+  Boundary,
+  Fragment
+};
 
 export type {
   Component,
@@ -39,7 +49,7 @@ declare global {
 
 interface Props extends Record<string, any> {}
 
-interface Component<P extends Props> {
+interface Component<P extends Props = Props> {
   (p: P): VNode | (() => VNode);
 }
 
@@ -54,11 +64,7 @@ interface ComponentCtrl {
 }
 
 type ComponentCtrlGetter = (intention: 0 | 1 | 2) => ComponentCtrl;
-
-type PropsOf<T extends Component<any>> = T extends Component<infer P>
-  ? P
-  : never;
-
+type PropsOf<T extends Component> = T extends Component<infer P> ? P : never;
 type RefObject<T> = { current: T };
 
 type Context<T> = {
@@ -459,18 +465,18 @@ function component(arg1: any, arg2?: any): any {
     }
   };
 
-  return Object.defineProperty(clazz, 'name', {
-    value: arg1
-  });
+  setName(clazz, arg1);
+  setProperty(clazz, '__component', arg2);
+  return clazz;
 }
 
-function h<P extends Props>(
+function createElement<P extends Props>(
   type: string | Component<any>,
   props: P,
   ...children: VNode[]
 ): JSX.Element {
   if (typeof type === 'string') {
-    return createElement(type, props, ...children);
+    return preactCreateElement(type, props, ...children);
   }
 
   let preactClass: any = (type as any).__preactClass;
@@ -480,7 +486,7 @@ function h<P extends Props>(
     (type as any).__preactClass = preactClass;
   }
 
-  return createElement(preactClass, props, ...children);
+  return preactCreateElement(preactClass, props, ...children);
 }
 
 // === contexts ======================================================
@@ -502,10 +508,92 @@ function createContext<T>(
   });
 
   function Provider({ value, children }: any) {
-    return createElement(preactCtx.Provider, { value, children });
+    return preactCreateElement(preactCtx.Provider, { value, children });
   }
 
-  Provider.displayName = `Provider(${contextName})`;
+  setName(Provider, `Provider(${contextName})`);
 
   return [context, Provider];
+}
+
+// === Fragment ======================================================
+
+setProperty(Fragment, '__component', Fragment);
+setProperty(Fragment, '__preactClass', Fragment);
+
+// === Boundary ======================================================
+
+class PreactBoundary extends PreactComponent<{
+  fallback: ((error: any, retry: () => void) => void) | VNode;
+  children?: VNode;
+}> {
+  #hasError = false;
+  #error: any = null;
+
+  #reset = () => {
+    if (this.#hasError) {
+      this.forceUpdate();
+    }
+
+    this.#hasError = false;
+    this.#error = null;
+  };
+
+  componentDidCatch(error: any) {
+    this.#hasError = true;
+    this.#error = error;
+
+    const fallback = this.props.fallback;
+
+    if (typeof fallback === 'function') {
+      fallback(error, this.#reset);
+    }
+  }
+
+  shouldComponentUpdate() {
+    return !this.#hasError || typeof this.props.fallback !== 'function';
+  }
+
+  render() {
+    return this.#hasError
+      ? this.props.fallback
+      : preactCreateElement(Fragment, null, this.props.children);
+  }
+}
+
+function Boundary(props: { fallback: VNode }) {
+  return preactCreateElement(PreactBoundary, props);
+}
+
+setProperty(Boundary, '__preactClass', PreactBoundary);
+setName(Boundary, 'Boundary');
+
+// === virtual elements ==============================================
+
+function getType(vnode: VNode): string | Component | null {
+  if (vnode && 'type' in vnode) {
+    if (typeof vnode.type === 'string') {
+      return vnode.type;
+    } else if ('__preactClass' in vnode.type) {
+      return (vnode.type as any).__component;
+    }
+  }
+
+  return null;
+}
+
+function getProps(vnode: VNode): Props | null {
+  return vnode && 'type' in vnode && 'props' in vnode ? vnode.props : null;
+}
+
+// === utilities =====================================================
+
+function setProperty(obj: object, name: string, value: any) {
+  Object.defineProperty(obj, name, {
+    value
+  });
+}
+
+function setName(obj: object, name: string) {
+  setProperty(obj, 'name', name);
 }

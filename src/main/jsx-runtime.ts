@@ -1,4 +1,4 @@
-import { h, Fragment } from 'js-widgets';
+import { createElement, Fragment } from 'js-widgets';
 
 // TODO - fix this: use `jsx` from `preact/jsx-runtime`!
 function f(type: any, props: any, key: any, __self?: any, __source?: any) {
@@ -19,7 +19,9 @@ function f(type: any, props: any, key: any, __self?: any, __source?: any) {
     }
   }
 
-  return children ? h(type, p, ...children) : h(type, p);
+  return children
+    ? createElement(type, p, ...children)
+    : createElement(type, p);
 }
 
 export { f as jsx, f as jsxs, f as jsxDEV, Fragment };
