@@ -62,8 +62,7 @@ type PropsOf<T extends Component<any>> = T extends Component<infer P>
 type RefObject<T> = { current: T };
 
 type Context<T> = {
-  type: 'context';
-  name: string;
+  contextName: string;
   defaultValue: T;
 };
 
@@ -487,19 +486,18 @@ function h<P extends Props>(
 // === contexts ======================================================
 
 function createContext<T>(
-  name: string,
+  contextName: string,
   defaultValue: T
 ): [Context<T>, Component<{ value: T }>] {
   const preactCtx = createPreactContext(defaultValue);
-  preactCtx.displayName = `InnerProvider(${name})`;
+  preactCtx.displayName = `InnerProvider(${contextName})`;
 
   class Ctx {
     static __preactCtx = preactCtx;
   }
 
   const context = Object.assign(new Ctx(), {
-    type: 'context' as const,
-    name,
+    contextName,
     defaultValue
   });
 
@@ -507,7 +505,7 @@ function createContext<T>(
     return createElement(preactCtx.Provider, { value, children });
   }
 
-  Provider.displayName = `Provider(${name})`;
+  Provider.displayName = `Provider(${contextName})`;
 
   return [context, Provider];
 }
