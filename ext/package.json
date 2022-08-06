@@ -1,6 +1,7 @@
 {
-  "name": "js-widgets-ext",
+  "name": "js-widgets_ext",
   "version": "0.0.1",
+  "private": true,
   "types": "../dist/types/ext.d.ts",
   "main": "../dist/js-widgets.ext.cjs.js",
   "module": "../dist/js-widgets.ext.esm.js"

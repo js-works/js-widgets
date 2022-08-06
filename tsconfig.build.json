@@ -32,7 +32,8 @@
     "src/main/hooks.ts",
     "src/main/ext.ts",
     "src/main/util.ts",
-    "src/main/mobx-tools.ts"
+    "src/main/mobx-tools.ts",
+    "src/main/jsx-runtime.ts"
   ],
   "include": ["./src/main/*.ts"],
   "exclude": ["node_modules"]

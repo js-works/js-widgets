@@ -1,6 +1,7 @@
 {
-  "name": "js-widgets-util",
+  "name": "js-widgets_util",
   "version": "0.0.1",
+  "private": true,
   "types": "../dist/types/util.d.ts",
   "main": "../dist/js-widgets.util.cjs.js",
   "module": "../dist/js-widgets.util.esm.js"

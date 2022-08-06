@@ -33,6 +33,7 @@
     "src/main/ext.ts",
     "src/main/util.ts",
     "src/main/mobx-tools.ts",
+    "src/main/jsx-runtime.ts",
     "src/stories/demo.stories.tsx"
   ],
   "include": ["./src/**/*.ts*", "src/demos/todomvc/todomvc-old.xyz"],

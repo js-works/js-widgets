@@ -5,6 +5,7 @@ import {
   options,
   Component as PreactComponent,
   ComponentClass,
+  Fragment,
   JSX
 } from 'preact';
 
@@ -12,7 +13,7 @@ import type { VNode } from 'preact';
 
 // === exports =======================================================
 
-export { createContext, h, intercept, render };
+export { createContext, h, intercept, render, Fragment };
 
 export type {
   Component,

@@ -1,6 +1,6 @@
 {
   "name": "js-widgets",
-  "version": "0.0.93",
+  "version": "0.0.103",
   "description": "",
   "main": "dist/js-widgets.core.cjs.js",
   "module": "dist/js-widgets.core.esm.js",
@@ -36,6 +36,12 @@
       "require": "./dist/js-widgets.mobx-tools.cjs.js",
       "umd": "./dist/js-widgets.mobx-tools.umd.js",
       "types": "./dist/types/mobx-tools.d.ts"
+    },
+    "./jsx-runtime": {
+      "import": "./dist/js-widgets.jsx-runtime.esm.js",
+      "require": "./dist/js-widgets.jsx-runtime.cjs.js",
+      "umd": "./dist/js-widgets.jsx-runtime.umd.js",
+      "types": "./dist/types/jsx-runtime.d.ts"
     }
   },
   "files": [
@@ -44,7 +50,8 @@
     "hooks",
     "ext",
     "util",
-    "mobx-tools"
+    "mobx-tools",
+    "jsx-runtime"
   ],
   "scripts": {
     "clean": "shx rm -rf dist build",
@@ -58,11 +65,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/js-widgets/js-widgets.git"
+    "url": "https://github.com/js-works/js-widgets.git"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "LGPL-3.0",
   "bugs": {
     "url": "https://github.com/js-widgets/js-widgets/issues"
   },

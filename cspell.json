@@ -2,8 +2,9 @@
   "version": "0.2",
   "words": [
     "autorun", //
-    "preact",
     "js-widgets",
+    "jsxs",
+    "preact",
     "todoapp",
     "todomvc",
     "todos"
