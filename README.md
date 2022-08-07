@@ -107,6 +107,7 @@ render(<Counter />, '#app');
 - getType
 - getProps
 - intercept
+- lazy
 - render
 - Boundary
 - Fragment
