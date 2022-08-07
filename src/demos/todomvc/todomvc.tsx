@@ -1,4 +1,4 @@
-/** @jsx h */
+/** @jsx createElement */
 import { createElement, render } from 'js-widgets';
 import { effect, mutable } from 'js-widgets/ext';
 import { createRef } from 'js-widgets/util';
