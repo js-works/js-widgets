@@ -47,6 +47,8 @@ declare global {
   namespace JSX {
     interface IntrinsicElements extends preact.JSX.IntrinsicElements {}
     interface IntrinsicAttributes extends preact.JSX.IntrinsicAttributes {}
+
+    type Element = any; // TODO!!!!!!!!!!!!!!!!!!!
   }
 }
 
@@ -55,7 +57,7 @@ declare global {
 interface Props extends Record<string, any> {}
 
 interface Component<P extends Props = Props> {
-  (p: P): VNode | (() => VNode);
+  (p: P): JSX.Element | any | (() => JSX.Element);
 }
 
 interface ComponentCtrl {
@@ -70,7 +72,7 @@ interface ComponentCtrl {
 
 type ComponentCtrlGetter = (intention: 0 | 1 | 2) => ComponentCtrl;
 type PropsOf<T extends Component> = T extends Component<infer P> ? P : never;
-type RefObject<T> = { current: T };
+type RefObject<T> = { current: T | null };
 
 type Context<T> = {
   contextName: string;
@@ -437,7 +439,7 @@ function intercept(params: {
   }
 }
 
-function render(content: VNode, container: Element | string) {
+function render(content: JSX.Element, container: Element | string) {
   const target =
     typeof container === 'string'
       ? document.querySelector(container)

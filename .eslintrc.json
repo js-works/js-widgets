@@ -1,9 +1,5 @@
 {
-  "extends": [
-    "eslint:recommended",
-    "react:recommended",
-  ],
-  
+  "extends": ["eslint:recommended", "react:recommended"],
   "plugins": ["react"],
 
   "parserOptions": {
@@ -30,7 +26,7 @@
 
   "settings": {
     "react": {
-      "pragma": "h"
+      "pragma": "createElement"
     }
   },
 

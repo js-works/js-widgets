@@ -1,7 +1,6 @@
-/* @jsx createElement */
 import { ReactiveControllerHost } from 'lit';
 import { makeAutoObservable } from 'mobx';
-import { createContext, createElement, RefObject } from 'js-widgets';
+import { createContext, RefObject, Component } from 'js-widgets';
 import { createRef } from 'js-widgets/util';
 import { makeComponentsMobxAware } from 'js-widgets/mobx-tools';
 import { PropsOf } from 'js-widgets';
@@ -138,12 +137,16 @@ function ComplexCounter(props: {
   );
 }
 
-function ComplexCounterDemo() {
-  const counterRef: any =
-    createRef<PropsOf<typeof ComplexCounter>['componentRef']>(); // TODO
+type ComponentRefType<T extends Component<any>> = T extends Component<{
+  componentRef: RefObject<infer R>;
+}>
+  ? R
+  : never;
 
-  const onResetToZeroClick = () => counterRef.current.reset(0);
-  const onResetToOneHundredClick = () => counterRef.current.reset(100);
+function ComplexCounterDemo() {
+  const counterRef = createRef<ComponentRefType<typeof ComplexCounter>>();
+  const onResetToZeroClick = () => counterRef.current!.reset(0);
+  const onResetToOneHundredClick = () => counterRef.current!.reset(100);
 
   return () => (
     <div>

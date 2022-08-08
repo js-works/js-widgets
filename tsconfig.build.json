@@ -24,6 +24,8 @@
       "js-widgets/hooks": ["src/main/hooks.ts"],
       "js-widgets/ext": ["src/main/ext.ts"],
       "js-widgets/util": ["src/main/util.ts"],
+      "js-widgets/mobx": ["src/main/mobx"],
+      "js-widgets/jsx-runtime": ["src/main/jsx-runtime"],
       "js-widgets": ["./src/main/core.ts"]
     }
   },

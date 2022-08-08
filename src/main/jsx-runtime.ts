@@ -1,5 +1,9 @@
 import { createElement, Fragment } from 'js-widgets';
 
+declare global {
+  namespace JSX {}
+}
+
 // TODO - fix this: use `jsx` from `preact/jsx-runtime`!
 function f(type: any, props: any, key: any, __self?: any, __source?: any) {
   let p = null;

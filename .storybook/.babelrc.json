@@ -4,9 +4,8 @@
     [
       "@babel/plugin-transform-react-jsx",
       {
-        "runtime": "classic",
-        "pragma": "h",
-        "pragmaFragment": "Fragment"
+        "runtime": "automatic",
+        "importSource": ""
       }
     ]
   ]

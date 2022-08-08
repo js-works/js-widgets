@@ -5,9 +5,8 @@
     "moduleResolution": "Node",
     "strict": true,
     "exactOptionalPropertyTypes": true,
-    "jsx": "react",
-    "jsxFactory": "h",
-    "jsxFragmentFactory": "Fragment",
+    "jsx": "react-jsx",
+    "jsxImportSource": "js-widgets",
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
     "removeComments": true,
@@ -25,6 +24,7 @@
       "js-widgets/ext": ["src/main/ext.ts"],
       "js-widgets/util": ["src/main/util.ts"],
       "js-widgets/mobx-tools": ["src/main/mobx-tools.ts"],
+      "js-widgets/jsx-runtime": ["src/main/jsx-runtime.ts"],
       "js-widgets": ["./src/main/core.ts"]
     }
   },
