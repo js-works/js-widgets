@@ -71,12 +71,11 @@
   "author": "",
   "license": "LGPL-3.0",
   "bugs": {
-    "url": "https://github.com/js-widgets/js-widgets/issues"
+    "url": "https://github.com/js-works/js-widgets/issues"
   },
-  "homepage": "https://github.com/js-widgets/js-widgets#readme",
+  "homepage": "https://github.com/js-works/js-widgets#readme",
   "dependencies": {
-    "mobx": "^6.6.1",
-    "preact": "^10.10.0"
+    "mobx": "^6.6.1"
   },
   "devDependencies": {
     "@babel/core": "^7.18.10",
@@ -115,6 +114,7 @@
     "js-immutables": "0.0.5",
     "js-spec": "^0.1.79",
     "lit": "^2.2.8",
+    "preact": "^10.10.0",
     "preact-router": "^4.1.0",
     "rollup": "^2.77.2",
     "rollup-plugin-alias": "^2.2.0",

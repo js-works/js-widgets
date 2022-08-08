@@ -224,7 +224,7 @@ class BaseComponent<P extends Props> extends PreactComponent<
       static __preactClass = this.constructor;
     };
 
-    this.#propsObj = Object.assign(new propsObjClass(), props);
+    this.#propsObj = Object.assign(new propsObjClass(), normalizeProps(props));
 
     this.#ctrl = new Controller(this, this.#update, (handler: any) => {
       this.#emit = handler;
@@ -235,12 +235,7 @@ class BaseComponent<P extends Props> extends PreactComponent<
         delete this.#propsObj[key];
       }
 
-      Object.assign(this.#propsObj, this.props);
-
-      if ('__$ref$__' in this.#propsObj) {
-        this.#propsObj.ref = this.#propsObj.__$ref$__;
-        delete this.#propsObj.__$ref$__;
-      }
+      Object.assign(this.#propsObj, normalizeProps(this.props));
     });
   }
 
@@ -351,7 +346,7 @@ class BaseComponent<P extends Props> extends PreactComponent<
       if (content === undefined) {
         onRender(
           () => {
-            content = this.#main(this.#propsObj);
+            content = this.#main(normalizeProps(this.props));
           },
           this.#id,
           null
@@ -404,7 +399,7 @@ function intercept(params: {
           }
         }
 
-        onCreateElement!(noop, vnode.type, vnode.props);
+        onCreateElement!(noop, type, normalizeVNode(vnode.props));
       };
     }
 
@@ -490,6 +485,7 @@ function createElement<P extends Props>(
   if (typeof type === 'string') {
     return preactCreateElement(type, props, ...children);
   }
+
   let preactClass: any = (type as any).__preactClass;
 
   if (!preactClass) {
@@ -501,9 +497,9 @@ function createElement<P extends Props>(
 
   if (ret.ref) {
     if (!ret.props) {
-      ret.props = { __$ref$__: ret.ref };
+      ret.props = { __ref__: ret.ref };
     } else {
-      ret.props.__$ref$__ = ret.ref;
+      ret.props.__ref__ = ret.ref;
     }
   }
 
@@ -623,22 +619,10 @@ function getProps(vnode: VNode): Props | null {
   const node = vnode as any;
 
   if (node.__normalizedProps) {
-    return node.__normalizedProps;
+    node.__normalizedProps = normalizeProps(node.props);
   }
 
-  let props: Props;
-
-  if (node.ref) {
-    props = node.props;
-    props.ref = props.__$ref$__;
-    delete props.__$ref$__;
-  } else {
-    props = node.props || null;
-  }
-
-  node.__normalizedProps = props;
-
-  return props;
+  return node.__normalizedProps;
 }
 
 // === utilities =====================================================
@@ -651,4 +635,31 @@ function setProperty(obj: object, name: string, value: any) {
 
 function setName(obj: object, name: string) {
   setProperty(obj, 'name', name);
+}
+
+function normalizeVNode(vnode: VNode): void {
+  if (typeof vnode.type === 'string') {
+    return; // TODO
+  }
+
+  const node = vnode as any;
+
+  if (node.__normalizedProps) {
+    node.__normalizedProps = normalizeProps(node.props);
+  }
+
+  node.props = node.__normalizedProps;
+  node.__normalizedProps;
+}
+
+function normalizeProps(props: Props): Props {
+  if (!('__ref__' in props)) {
+    return props;
+  }
+
+  const { __ref__, ...ret } = props;
+
+  ret.ref = __ref__;
+
+  return ret;
 }
