@@ -50,19 +50,22 @@ setInterval(() => store.increment(), 1000);
 
 // === Simple counter demo ===========================================
 
-function SimpleCounterDemo(p: { initialCount?: number; label?: string }) {
-  const props = preset(p, () => ({
+function SimpleCounterDemo(p: {
+  initialCount?: number; //
+  label?: string;
+}) {
+  preset(p, () => ({
     initialCount: 0,
     label: 'Counter'
   }));
 
-  const [getCount, setCount] = stateVal(props.initialCount);
+  const [getCount, setCount] = stateVal(p.initialCount);
   const onIncrement = () => setCount((it) => it + 1);
   const onInput = (ev: any) => setCount(ev.currentTarget.valueAsNumber); // TODO
 
   effect(
     () => {
-      console.log(`Value of "${props.label}": ${getCount()}`);
+      console.log(`Value of "${p.label}": ${getCount()}`);
     },
     () => [getCount()]
   );
@@ -70,7 +73,7 @@ function SimpleCounterDemo(p: { initialCount?: number; label?: string }) {
   return () => (
     <div>
       <h3>Simple counter demo:</h3>
-      <label>{props.label}: </label>
+      <label>{p.label}: </label>
       <input type="number" value={getCount()} onInput={onInput} />
       <button onClick={onIncrement}>{getCount()}</button>
     </div>
@@ -102,7 +105,7 @@ function SimpleCounterDemo2({
 
 // === Complex counter demo ==========================================
 
-function ComplexCounter(props: {
+function ComplexCounter(p: {
   initialCount?: number;
   label?: string;
 
@@ -110,7 +113,7 @@ function ComplexCounter(props: {
     reset(n: number): void;
   }>;
 }) {
-  const p = preset(props, () => ({
+  preset(p, () => ({
     initialCount: 0,
     label: 'Counter'
   }));
@@ -119,7 +122,7 @@ function ComplexCounter(props: {
   const onIncrement = () => setCount((it) => it + 1);
   const onDecrement = () => setCount((it) => it - 1);
 
-  handleMethods(() => props.ref, {
+  handleMethods(() => p.ref, {
     reset(n) {
       setCount(n);
     }
