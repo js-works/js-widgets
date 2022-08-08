@@ -108,7 +108,7 @@ function ComplexCounter(p: {
   initialCount?: number;
   label?: string;
 
-  ref?: RefObject<{
+  $ref?: RefObject<{
     reset(n: number): void;
   }>;
 }) {
@@ -121,7 +121,7 @@ function ComplexCounter(p: {
   const onIncrement = () => setCount((it) => it + 1);
   const onDecrement = () => setCount((it) => it - 1);
 
-  handleMethods(() => p.ref, {
+  handleMethods(() => p.$ref, {
     reset(n) {
       setCount(n);
     }
@@ -145,7 +145,7 @@ function ComplexCounterDemo() {
 
   return () => (
     <div>
-      <ComplexCounter ref={counterRef} />
+      <ComplexCounter $ref={counterRef} />
       <br />
       <button onClick={onResetToZeroClick}>Reset to 0</button>
       <button onClick={onResetToOneHundredClick}>Reset to 100</button>
