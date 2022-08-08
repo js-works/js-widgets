@@ -25,22 +25,30 @@ npm run storybook
 
 ## Examples
 
+Remark: We are using the following naming convention to
+reduce the amount of noise in the source code (for non-trivial
+components, where you access the props and the state object
+very often, that makes quite a difference):
+
+- `p` is the variable for the props object
+- `s` is the variable for a state object
+
 ### Simple counter
 
 ```tsx
 import { render } from 'js-widgets';
-import { preset, stateObj } from 'js-widgets/ext';
+import { preset, state } from 'js-widgets/ext';
 
-function Counter(props: {
+function Counter(p: {
   name?: string; //
   initialCount?: number;
 }) {
-  const p = preset(props, () => ({
+  preset(p, () => ({
     initialCount: 0,
     label: 'Counter'
   }));
 
-  const [s, set] = stateObj({ count: p.initialCount });
+  const [s, set] = state({ count: p.initialCount });
   const onIncrement = () => set.count((it) => it + 1);
 
   return () => (
@@ -57,18 +65,18 @@ render(<Counter />, '#app');
 
 ```tsx
 import { render } from 'js-widgets';
-import { effect, preset, stateObj } from 'js-widgets/ext';
+import { effect, preset, state } from 'js-widgets/ext';
 
-function Counter(props: {
+function Counter(p: {
   initialCount?: number; //
   label?: string;
 }) {
-  const p = preset(props, () => ({
+  preset(p, () => ({
     initialCount: 0,
     label: 'Counter'
   }));
 
-  const [s, set] = stateObj({
+  const [s, set] = state({
     count: p.initialCount
   });
 

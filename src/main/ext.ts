@@ -28,16 +28,18 @@ export {
   effect,
   getRefresher,
   mutable,
-  preset,
   optimizeUpdates,
-  setDefaults,
+  preset,
   stateFn,
   stateObj,
+  stateObj as state, // not sure about the final name
   stateRef,
   stateVal,
+  stateVal as atom, // not sure about the final name
   interval,
   handleMethods,
-  handlePromise
+  handlePromise,
+  withDefaults
 };
 
 // === types =========================================================
@@ -79,9 +81,9 @@ intercept({
 
 // === extensions ====================================================
 
-// --- preset --------------------------------------------------------
+// --- withDefaults --------------------------------------------------
 
-function preset<P extends Props, D extends Partial<P>>(
+function withDefaults<P extends Props, D extends Partial<P>>(
   props: P,
   defaults: D | (() => D)
 ): P & D {
@@ -120,9 +122,9 @@ function preset<P extends Props, D extends Partial<P>>(
   return ret;
 }
 
-// --- setDefaults ---------------------------------------------------
+// --- preset --------------------------------------------------------
 
-function setDefaults<P extends Props, D extends Partial<P>>(
+function preset<P extends Props, D extends Partial<P>>(
   props: P,
   defaults: D | (() => D)
 ): asserts props is P & D {
