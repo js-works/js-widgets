@@ -148,16 +148,13 @@ function preset<P extends Props, D extends Partial<P>>(
     }
   }
 
-  const updateProps = () => {
-    for (const key in defaultValues) {
-      if (!props.hasOwnProperty(key)) {
-        (props as any)[key] = defaultValues[key];
-      }
-    }
-  };
+  (props.constructor as any).__defaults = defaultValues;
 
-  updateProps();
-  ctrl.beforeUpdate(updateProps);
+  for (const key in defaultValues) {
+    if (!props.hasOwnProperty(key)) {
+      (props as any)[key] = defaultValues[key];
+    }
+  }
 }
 
 // --- optimizeUpdates -----------------------------------------------

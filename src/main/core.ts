@@ -222,20 +222,13 @@ class BaseComponent<P extends Props> extends PreactComponent<
 
     const propsObjClass = class extends Object {
       static __preactClass = this.constructor;
+      static __defaults = {};
     };
 
     this.#propsObj = Object.assign(new propsObjClass(), getOrigProps(props));
 
     this.#ctrl = new Controller(this, this.#update, (handler: any) => {
       this.#emit = handler;
-    });
-
-    this.#ctrl.beforeUpdate(() => {
-      for (const key in this.#propsObj) {
-        delete this.#propsObj[key];
-      }
-
-      Object.assign(this.#propsObj, getOrigProps(this.props));
     });
   }
 
@@ -303,6 +296,8 @@ class BaseComponent<P extends Props> extends PreactComponent<
                 this.#isFactoryFunction = true;
                 this.#render = result;
               } else {
+                this.#propsObj = null;
+
                 if (this.#usesExtensions) {
                   throw new Error(
                     `Component "${getComponentName(
@@ -334,6 +329,18 @@ class BaseComponent<P extends Props> extends PreactComponent<
 
       if (!this.#mounted) {
         onRender(() => (content = this.#render!()), this.#id, getCtrl);
+
+        this.#ctrl.beforeUpdate(() => {
+          for (const key in this.#propsObj) {
+            delete this.#propsObj[key];
+          }
+
+          Object.assign(
+            this.#propsObj,
+            this.#propsObj.constructor.__defaults,
+            getOrigProps(this.props)
+          );
+        });
       } else {
         onRender(
           () => {
@@ -497,8 +504,8 @@ function createElement<P extends Props>(
   }
 
   if (props && props.ref) {
-    const origProps = props || null;
-    props = { ...props, __origProps: origProps };
+    const origProps = props;
+    props = { ...props, __origProps: origProps } as any;
     delete props.ref;
   }
 
@@ -631,9 +638,5 @@ function getOrigProps(props: Props): Props | null {
     return null;
   }
 
-  if (props.__origProps) {
-    return props.__origProps;
-  }
-
-  return props;
+  return props.__origProps ? props.__origProps : props;
 }
