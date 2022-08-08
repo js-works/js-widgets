@@ -107,7 +107,7 @@ function ComplexCounter(props: {
   initialCount?: number;
   label?: string;
 
-  componentRef?: RefObject<{
+  ref?: RefObject<{
     reset(n: number): void;
   }>;
 }) {
@@ -120,7 +120,7 @@ function ComplexCounter(props: {
   const onIncrement = () => setCount((it) => it + 1);
   const onDecrement = () => setCount((it) => it - 1);
 
-  handleMethods(() => props.componentRef, {
+  handleMethods(() => props.ref, {
     reset(n) {
       setCount(n);
     }
@@ -138,7 +138,7 @@ function ComplexCounter(props: {
 }
 
 type ComponentRefType<T extends Component<any>> = T extends Component<{
-  componentRef: RefObject<infer R>;
+  ref: RefObject<infer R>;
 }>
   ? R
   : never;
@@ -150,7 +150,7 @@ function ComplexCounterDemo() {
 
   return () => (
     <div>
-      <ComplexCounter componentRef={counterRef} />
+      <ComplexCounter ref={counterRef} />
       <br />
       <button onClick={onResetToZeroClick}>Reset to 0</button>
       <button onClick={onResetToOneHundredClick}>Reset to 100</button>

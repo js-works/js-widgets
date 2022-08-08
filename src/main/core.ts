@@ -236,6 +236,11 @@ class BaseComponent<P extends Props> extends PreactComponent<
       }
 
       Object.assign(this.#propsObj, this.props);
+
+      if ('__$ref$__' in this.#propsObj) {
+        this.#propsObj.ref = this.#propsObj.__$ref$__;
+        delete this.#propsObj.__$ref$__;
+      }
     });
   }
 
@@ -485,7 +490,6 @@ function createElement<P extends Props>(
   if (typeof type === 'string') {
     return preactCreateElement(type, props, ...children);
   }
-
   let preactClass: any = (type as any).__preactClass;
 
   if (!preactClass) {
@@ -493,7 +497,17 @@ function createElement<P extends Props>(
     (type as any).__preactClass = preactClass;
   }
 
-  return preactCreateElement(preactClass, props, ...children);
+  const ret = preactCreateElement(preactClass, props, ...children);
+
+  if (ret.ref) {
+    if (!ret.props) {
+      ret.props = { __$ref$__: ret.ref };
+    } else {
+      ret.props.__$ref$__ = ret.ref;
+    }
+  }
+
+  return ret;
 }
 
 // === contexts ======================================================
