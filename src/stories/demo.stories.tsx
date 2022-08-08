@@ -1,6 +1,6 @@
 import { ReactiveControllerHost } from 'lit';
 import { makeAutoObservable } from 'mobx';
-import { createContext, RefObject, Component } from 'js-widgets';
+import { createContext, RefObject } from 'js-widgets';
 import { createRefFor } from 'js-widgets/util';
 import { makeComponentsMobxAware } from 'js-widgets/mobx-tools';
 import { useEffect, useState } from 'js-widgets/hooks';
@@ -36,7 +36,6 @@ export const promiseDemo = () => <PromiseDemo />;
 export const mobxDemo = () => <MobxDemo />;
 
 // Auto-updating mobx store
-
 const store = makeAutoObservable({
   count: 0,
 

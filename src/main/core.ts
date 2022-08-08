@@ -598,19 +598,47 @@ setName(Suspense, 'Suspense');
 // === virtual elements ==============================================
 
 function getType(vnode: VNode): string | Component | null {
-  if (vnode && 'type' in vnode) {
-    if (typeof vnode.type === 'string') {
-      return vnode.type;
-    } else if ('__preactClass' in vnode.type) {
-      return (vnode.type as any).__component;
-    }
+  if (!vnode || !('type' in vnode && 'props' in vnode)) {
+    return null;
   }
 
-  return null;
+  if (typeof vnode.type === 'string') {
+    return vnode.type;
+  } else if ('__component' in vnode.type) {
+    return (vnode.type as any).__component;
+  } else {
+    return null;
+  }
 }
 
 function getProps(vnode: VNode): Props | null {
-  return vnode && 'type' in vnode && 'props' in vnode ? vnode.props : null;
+  if (!vnode || !('type' in vnode && 'props' in vnode)) {
+    return null;
+  }
+
+  if (typeof vnode.type === 'string') {
+    return vnode.props || null;
+  }
+
+  const node = vnode as any;
+
+  if (node.__normalizedProps) {
+    return node.__normalizedProps;
+  }
+
+  let props: Props;
+
+  if (node.ref) {
+    props = node.props;
+    props.ref = props.__$ref$__;
+    delete props.__$ref$__;
+  } else {
+    props = node.props || null;
+  }
+
+  node.__normalizedProps = props;
+
+  return props;
 }
 
 // === utilities =====================================================
