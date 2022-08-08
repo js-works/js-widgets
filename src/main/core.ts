@@ -224,7 +224,7 @@ class BaseComponent<P extends Props> extends PreactComponent<
       static __preactClass = this.constructor;
     };
 
-    this.#propsObj = Object.assign(new propsObjClass(), props);
+    this.#propsObj = Object.assign(new propsObjClass(), getOrigProps(props));
 
     this.#ctrl = new Controller(this, this.#update, (handler: any) => {
       this.#emit = handler;
@@ -235,7 +235,7 @@ class BaseComponent<P extends Props> extends PreactComponent<
         delete this.#propsObj[key];
       }
 
-      Object.assign(this.#propsObj, this.props);
+      Object.assign(this.#propsObj, getOrigProps(this.props));
     });
   }
 
@@ -259,7 +259,10 @@ class BaseComponent<P extends Props> extends PreactComponent<
       return true;
     }
 
-    return (this as any).__shouldComponentUpdate(this.props, nextProps);
+    return (this as any).__shouldComponentUpdate(
+      getOrigProps(this.props),
+      getOrigProps(nextProps)
+    );
   }
 
   render() {
@@ -346,7 +349,7 @@ class BaseComponent<P extends Props> extends PreactComponent<
       if (content === undefined) {
         onRender(
           () => {
-            content = this.#main(this.props);
+            content = this.#main(getOrigProps(this.props));
           },
           this.#id,
           null
@@ -493,6 +496,12 @@ function createElement<P extends Props>(
     (type as any).__preactClass = preactClass;
   }
 
+  if (props && props.ref) {
+    const origProps = props || null;
+    props = { ...props, __origProps: origProps };
+    delete props.ref;
+  }
+
   return preactCreateElement(preactClass, props, ...children);
 }
 
@@ -602,7 +611,7 @@ function getProps(vnode: VNode): Props | null {
     return null;
   }
 
-  return vnode.props || null;
+  return getOrigProps(vnode.props);
 }
 
 // === utilities =====================================================
@@ -615,4 +624,16 @@ function setProperty(obj: object, name: string, value: any) {
 
 function setName(obj: object, name: string) {
   setProperty(obj, 'name', name);
+}
+
+function getOrigProps(props: Props): Props | null {
+  if (!props) {
+    return null;
+  }
+
+  if (props.__origProps) {
+    return props.__origProps;
+  }
+
+  return props;
 }

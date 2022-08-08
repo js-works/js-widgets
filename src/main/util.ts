@@ -17,7 +17,7 @@ function createRef<T>(value?: T): { current: T | null } {
 }
 
 function createRefFor<T extends object>(
-  component: Component<{ $ref: RefObject<T> }>
+  component: Component<{ ref: RefObject<T> }>
 ): RefObject<T> {
   return createRef();
 }
