@@ -68,12 +68,12 @@ import { render } from 'js-widgets';
 import { afterMount, effect, preset, state } from 'js-widgets/ext';
 
 function Counter(p: {
-  initialCount?: number; //
-  name?: string;
+  name?: string; //
+  initialCount?: number;
 }) {
   preset(p, () => ({
-    initialCount: 0,
-    name: 'Counter'
+    name: 'Counter',
+    initialCount: 0
   }));
 
   const [s, set] = state({ count: p.initialCount });
