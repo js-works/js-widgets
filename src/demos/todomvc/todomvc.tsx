@@ -1,6 +1,6 @@
 import { render } from 'js-widgets';
-import { effect, mutable } from 'js-widgets/ext';
-import { createRef } from 'js-widgets/util';
+import { effect, state } from 'js-widgets/ext';
+import { classes, createRef } from 'js-widgets/util';
 import { makeComponentsMobxAware } from 'js-widgets/mobx-tools';
 import { autorun, makeAutoObservable } from 'mobx';
 
@@ -139,13 +139,13 @@ function saveTodos(todos: Todo[]) {
 // --- Header --------------------------------------------------------
 
 function Header() {
-  const s = mutable({ title: '' });
-  const onInput = (ev: any) => (s.title = ev.target.value);
+  const [s, set] = state({ title: '' });
+  const onInput = (ev: any) => set.title(ev.target.value);
 
   const onKeyDown = (ev: any) => {
     if (ev.keyCode === ENTER_KEY) {
       const newTitle = ev.target.value.trim();
-      s.title = '';
+      set.title('');
 
       if (newTitle) {
         ev.preventDefault();
@@ -176,7 +176,7 @@ function TodoItem(p: {
 }) {
   const inputFieldRef = createRef<HTMLInputElement>();
 
-  const s = mutable({
+  const [s, set] = state({
     active: false,
     title: p.todo.title
   });
@@ -186,13 +186,13 @@ function TodoItem(p: {
   const onToggleClick = (ev: any) =>
     store.setCompleted(p.todo.id, ev.target.checked);
 
-  const onDoubleClick = () => (s.active = true);
-  const onInput = (ev: any) => (s.title = ev.target.value);
+  const onDoubleClick = () => set.active(true);
+  const onInput = (ev: any) => set.title(ev.target.value);
 
   const onBlur = (ev: any) => {
     const title = ev.target.value.trim();
-    s.active = false;
-    s.title = title;
+    set.active(false);
+    set.title(title);
 
     if (title) {
       store.setTodoTitle(p.todo.id, title);
@@ -205,7 +205,7 @@ function TodoItem(p: {
     if (ev.keyCode === ENTER_KEY) {
       ev.target.blur();
     } else if (ev.keyCode === ESC_KEY) {
-      s.active = false;
+      set.active(false);
     }
   };
 
@@ -216,11 +216,13 @@ function TodoItem(p: {
   });
 
   return () => {
-    const classes =
-      (s.active ? 'editing ' : '') + (p.todo.completed ? 'completed' : '');
+    const className = classes({
+      editing: s.active,
+      completed: p.todo.completed
+    });
 
     return (
-      <li className={classes}>
+      <li className={className}>
         <div className="view">
           <input
             className="toggle"
