@@ -81,7 +81,6 @@ function Counter(p: {
 
   afterMount(() => {
     console.log(`Counter "${p.label}" has been mounted`);
-
     return () => console.log(`Counter "${p.label}" will unmount`);
   });
 
