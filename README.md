@@ -45,7 +45,7 @@ function Counter(p: {
 }) {
   preset(p, () => ({
     initialCount: 0,
-    label: 'Counter'
+    name: 'Counter'
   }));
 
   const [s, set] = state({ count: p.initialCount });
@@ -69,23 +69,23 @@ import { afterMount, effect, preset, state } from 'js-widgets/ext';
 
 function Counter(p: {
   initialCount?: number; //
-  label?: string;
+  name?: string;
 }) {
   preset(p, () => ({
     initialCount: 0,
-    label: 'Counter'
+    name: 'Counter'
   }));
 
   const [s, set] = state({ count: p.initialCount });
   const onIncrement = () => set.count((it) => it + 1);
 
   afterMount(() => {
-    console.log(`Counter "${p.label}" has been mounted`);
-    return () => console.log(`Counter "${p.label}" will unmount`);
+    console.log(`Counter "${p.name}" has been mounted`);
+    return () => console.log(`Counter "${p.name}" will unmount`);
   });
 
   effect(
-    () => console.log(`Value of "${p.label}": ${s.count}`),
+    () => console.log(`Value of "${p.name}": ${s.count}`),
     () => [s.count]
   );
 
