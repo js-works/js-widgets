@@ -1,4 +1,4 @@
-import { options, ComponentClass } from 'preact';
+import { isValidElement, options, ComponentClass } from 'preact';
 
 import {
   createContext as createPreactContext,
@@ -23,6 +23,7 @@ export {
   getType,
   getProps,
   intercept,
+  isElement,
   lazy,
   render,
   Boundary,
@@ -598,6 +599,10 @@ setProperty(Suspense, '__preactClass', Suspense);
 setName(Suspense, 'Suspense');
 
 // === virtual elements ==============================================
+
+function isElement(subj: any) {
+  return isValidElement(subj);
+}
 
 function getType(vnode: VNode): string | Component | null {
   if (!vnode || !('type' in vnode && 'props' in vnode)) {

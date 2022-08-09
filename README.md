@@ -2,7 +2,7 @@
 
 A R&D project to evaluate an API for developing components using an alternative to hook functions (called "extensions"), while still remain the possibility to implement in usual react-style.
 <br />
-The main advantages of the new API are:
+The main advantages of the new API (= using "extensions" instead of "hooks") are:
 
 - No rules of hooks
 - No special linter necessary
@@ -115,6 +115,7 @@ render(<Counter />, '#app');
 - getType
 - getProps
 - intercept
+- isElement
 - lazy
 - render
 - Boundary
