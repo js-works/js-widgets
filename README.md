@@ -76,10 +76,7 @@ function Counter(p: {
     label: 'Counter'
   }));
 
-  const [s, set] = state({
-    count: p.initialCount
-  });
-
+  const [s, set] = state({ count: p.initialCount });
   const onIncrement = () => set.count((it) => it + 1);
 
   afterMount(() => {
