@@ -61,11 +61,11 @@ function Counter(p: {
 render(<Counter />, '#app');
 ```
 
-### Additional example - showing some more features
+### Additional example - showing some lifecycle extensions
 
 ```tsx
 import { render } from 'js-widgets';
-import { effect, preset, state } from 'js-widgets/ext';
+import { afterMount, effect, preset, state } from 'js-widgets/ext';
 
 function Counter(p: {
   initialCount?: number; //
