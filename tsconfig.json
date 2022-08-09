@@ -34,8 +34,9 @@
     "src/main/util.ts",
     "src/main/mobx-tools.ts",
     "src/main/jsx-runtime.ts",
-    "src/stories/demo.stories.tsx"
+    "src/stories/demo.stories.tsx",
+    "src/demos/todomvc/todomvc.tsx"
   ],
-  "include": ["./src/**/*.ts*", "src/demos/todomvc/todomvc-old.xyz"],
+  "include": ["./src/**/*.ts*", "src/demos/todomvc/todomvc.tsx"],
   "exclude": ["node_modules"]
 }
