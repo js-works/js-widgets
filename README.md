@@ -49,10 +49,10 @@ function Counter(p: {
   }));
 
   const [s, set] = state({ count: p.initialCount });
-  const onIncrement = () => set.count((it) => it + 1);
+  const increment = () => set.count((it) => it + 1);
 
   return () => (
-    <button onClick={onIncrement}>
+    <button onClick={increment}>
       {p.name}: {s.count}
     </button>
   );
@@ -77,7 +77,7 @@ function Counter(p: {
   }));
 
   const [s, set] = state({ count: p.initialCount });
-  const onIncrement = () => set.count((it) => it + 1);
+  const increment = () => set.count((it) => it + 1);
 
   afterMount(() => {
     console.log(`Counter "${p.name}" has been mounted`);
@@ -91,7 +91,7 @@ function Counter(p: {
 
   return () => (
     <div>
-      <button onClick={onIncrement}>
+      <button onClick={increment}>
         {p.name}: {s.count}
       </button>
     </div>
