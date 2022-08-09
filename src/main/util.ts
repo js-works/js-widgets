@@ -81,14 +81,38 @@ function component(
   name: string
 ): <P extends Props>(main: Component<P>) => Component<P>;
 
+function component<P extends Props>(
+  main: Component<P>
+): <D extends Partial<P>>(
+  defaults: D
+) => (main: (props: P & D) => () => JSX.Element) => Component<P>;
+
 function component(arg1: any, arg2?: any): any {
   if (typeof arg1 === 'function') {
     return component('', arg1);
   } else if (arguments.length < 2) {
-    return (main: Component) => component(arg1, main);
+    return (arg3: any) => {
+      if (typeof arg3 === 'function') {
+        return component(arg1, arg3);
+      } else {
+        return (arg4: any) =>
+          component(arg1, (props) => {
+            const defaults = arg3;
+            props.constructor.__defaults = defaults;
+
+            for (const key of Object.keys(defaults)) {
+              if (props[key] === undefined) {
+                props[key] = defaults[key];
+              }
+            }
+
+            return arg4(props);
+          });
+      }
+    };
   }
 
-  const ret = arg2!.bind(null);
+  const ret = arg2.bind(null);
   setName(ret, arg1);
   return ret;
 }
