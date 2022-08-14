@@ -4,16 +4,17 @@ import { createContext, RefObject } from 'js-widgets';
 import { createRefFor } from 'js-widgets/util';
 import { makeComponentsMobxAware } from 'js-widgets/mobx-tools';
 import { useEffect, useState } from 'js-widgets/hooks';
+import { opt, props, req, widget } from 'js-widgets/util';
 
 import {
+  atom,
   consume,
   create,
   createMemo,
   createTicker,
   effect,
   getRefresher,
-  stateVal,
-  stateObj,
+  state,
   interval,
   handleMethods,
   handlePromise,
@@ -26,6 +27,7 @@ export default {
 
 export const simpleCounterDemo = () => <SimpleCounterDemo />;
 export const simpleCounterDemo2 = () => <SimpleCounterDemo2 />;
+export const simpleCounterDemo3 = () => <SimpleCounterDemo3 />;
 export const complexCounterDemo = () => <ComplexCounterDemo />;
 export const clockDemo = () => <ClockDemo />;
 export const memoDemo = () => <MemoDemo />;
@@ -58,7 +60,7 @@ function SimpleCounterDemo(p: {
     label: 'Counter'
   }));
 
-  const [getCount, setCount] = stateVal(p.initialCount);
+  const [getCount, setCount] = atom(p.initialCount);
   const onIncrement = () => setCount((it) => it + 1);
   const onInput = (ev: any) => setCount(ev.currentTarget.valueAsNumber); // TODO
 
@@ -102,6 +104,34 @@ function SimpleCounterDemo2({
   );
 }
 
+// === Simple counter demo 3 =========================================
+
+const x = widget('')(
+  props({
+    initialCount: opt(0),
+    label: opt('Counter')
+  })
+);
+
+const SimpleCounterDemo3 = widget('SimpleCounterDemo3')(
+  props({
+    initialCount: opt(0),
+    label: opt('Counter')
+  })
+)((p) => {
+  const [s, set] = state({ count: p.initialCount });
+  const onIncrement = () => set.count((it) => it + 1);
+
+  return (
+    <div>
+      <h3>Simple counter demo 2:</h3>
+      <button onClick={onIncrement}>
+        {p.label}: {s.count}{' '}
+      </button>
+    </div>
+  );
+});
+
 // === Complex counter demo ==========================================
 
 function ComplexCounter(p: {
@@ -117,7 +147,7 @@ function ComplexCounter(p: {
     label: 'Counter'
   }));
 
-  const [getCount, setCount] = stateVal(p.initialCount);
+  const [getCount, setCount] = atom(p.initialCount);
   const onIncrement = () => setCount((it) => it + 1);
   const onDecrement = () => setCount((it) => it - 1);
 
@@ -169,13 +199,13 @@ function ClockDemo() {
 // === Memo demo =====================================================
 
 function MemoDemo() {
-  const [state, set] = stateObj({ count: 0 });
+  const [s, set] = state({ count: 0 });
   const onButtonClick = () => set.count((it) => it + 1);
   const memo = createMemo(
     () =>
       'Last time the memoized value was calculated: ' +
       new Date().toLocaleTimeString(),
-    () => [Math.floor(state.count / 5)]
+    () => [Math.floor(s.count / 5)]
   );
 
   return () => (
@@ -194,7 +224,7 @@ function MemoDemo() {
 // === Interval demo =================================================
 
 function IntervalDemo() {
-  const [state, set] = stateObj({
+  const [s, set] = state({
     count: 0,
     delay: 1000
   });
@@ -203,11 +233,11 @@ function IntervalDemo() {
 
   interval(
     () => set.count((it) => it + 1),
-    () => state.delay
+    () => s.delay
   );
 
   interval(() => {
-    if (state.delay > 10) {
+    if (s.delay > 10) {
       set.delay((it) => (it /= 2));
     }
   }, 1000);
@@ -215,8 +245,8 @@ function IntervalDemo() {
   return () => (
     <div>
       <h3>Interval demo:</h3>
-      <div>Counter: {state.count}</div>
-      <div>Delay: {state.delay}</div>
+      <div>Counter: {s.count}</div>
+      <div>Delay: {s.delay}</div>
       <br />
       <button onClick={onReset}>Reset delay</button>
     </div>
@@ -240,7 +270,7 @@ const translations = {
 const [localeCtx, LocaleProvider] = createContext('locale', 'en');
 
 function ContextDemo() {
-  const [getLocale, setLocale] = stateVal('en');
+  const [getLocale, setLocale] = atom('en');
   const onLocaleChange = (ev: any) => setLocale(ev.target.value);
 
   return () => (
@@ -338,7 +368,7 @@ function Loader(p: { loadingText?: string; finishText?: string }) {
 }
 
 function PromiseDemo() {
-  const [state, set] = stateObj({
+  const [s, set] = state({
     key: 0,
     loadingText: 'Loading...',
     finishText: 'Finished!'
@@ -361,9 +391,9 @@ function PromiseDemo() {
       <h3>Promise demo (last update {new Date().toLocaleTimeString()})</h3>
       <section>
         <Loader
-          key={state.key}
-          loadingText={state.loadingText}
-          finishText={state.finishText}
+          key={s.key}
+          loadingText={s.loadingText}
+          finishText={s.finishText}
         />
       </section>
       <br />

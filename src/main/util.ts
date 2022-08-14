@@ -2,14 +2,9 @@ import type { Component, Props, RefObject } from 'js-widgets';
 
 // === exports =======================================================
 
-export {
-  classes,
-  component,
-  component as widget, // not sure about final name
-  createRef,
-  createRefFor,
-  setName
-};
+export { classes, component, createRef, createRefFor, setName };
+
+export * from './widget';
 
 // === local data ====================================================
 
@@ -98,7 +93,7 @@ function component(arg1: any, arg2?: any): any {
         return (arg4: any) =>
           component(arg1, (props) => {
             const defaults = arg3;
-            props.constructor.__defaults = defaults;
+            (props.constructor as any).__defaults = defaults;
 
             for (const key of Object.keys(defaults)) {
               if (props[key] === undefined) {
