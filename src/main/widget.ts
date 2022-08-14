@@ -1,5 +1,6 @@
 import {} from 'js-widgets';
 import type { ComponentCtrl, Props, VNode } from 'js-widgets';
+import { setName } from 'js-widgets/util';
 
 // === exports =======================================================
 
@@ -106,19 +107,26 @@ function widget(
 ) => (fn: (...args: A3) => () => VNode) => ComponentFunc<P>;
 
 function widget(name: string, arg2?: any): any {
-  // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  /*
-  if (arguments.length > 3) {
-    throw new Error('Too many modifiers');
+  if (arguments.length > 1) {
+    const ret = arg2.bind(null);
+
+    setName(ret, name);
+    return ret;
   }
 
-  return (p) => {
-    let ret: any = null
-    
-    for (let i = 0; i < arguments.length; ++i) {
-      ret = (ret)
+  return (...modifiers: Modifier<unknown[], unknown[]>[]) => {
+    if (modifiers.length > 3) {
+      throw new Error('Too many modifiers');
     }
-  
-  return  ret
-  */
+
+    return (props: Props) => {
+      let result: any;
+
+      modifiers.forEach((modifier, idx) => {
+        if (idx === 0) {
+          result = modifier;
+        }
+      });
+    };
+  };
 }
