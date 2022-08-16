@@ -4,7 +4,7 @@ import { createContext, RefObject } from 'js-widgets';
 import { createRefFor } from 'js-widgets/util';
 import { makeComponentsMobxAware } from 'js-widgets/mobx-tools';
 import { useEffect, useState } from 'js-widgets/hooks';
-import { opt, props, req, widget } from 'js-widgets/util';
+import { opt, props, widget } from 'js-widgets';
 
 import {
   atom,
@@ -106,13 +106,6 @@ function SimpleCounterDemo2({
 
 // === Simple counter demo 3 =========================================
 
-const x = widget('')(
-  props({
-    initialCount: opt(0),
-    label: opt('Counter')
-  })
-);
-
 const SimpleCounterDemo3 = widget('SimpleCounterDemo3')(
   props({
     initialCount: opt(0),
@@ -122,9 +115,9 @@ const SimpleCounterDemo3 = widget('SimpleCounterDemo3')(
   const [s, set] = state({ count: p.initialCount });
   const onIncrement = () => set.count((it) => it + 1);
 
-  return (
+  return () => (
     <div>
-      <h3>Simple counter demo 2:</h3>
+      <h3>Simple counter demo 3:</h3>
       <button onClick={onIncrement}>
         {p.label}: {s.count}{' '}
       </button>

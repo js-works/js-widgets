@@ -42,6 +42,8 @@ export type {
   VNode
 };
 
+export * from './widget';
+
 // === global types ==================================================
 
 declare global {

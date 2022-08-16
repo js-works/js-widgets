@@ -1,6 +1,4 @@
-import {} from 'js-widgets';
-import type { ComponentCtrl, Props, VNode } from 'js-widgets';
-import { setName } from 'js-widgets/util';
+import type { ComponentCtrl, Props, VNode } from './core';
 
 // === exports =======================================================
 
@@ -9,7 +7,6 @@ export type { ComponentCtrl, PropDef, PropsDef };
 
 // === types =========================================================
 
-type Func<A extends any[], R> = (...args: A) => R;
 type ComponentFunc<P extends Props> = (p: P) => () => VNode;
 type PropDefReq<T> = { required: true };
 type PropDefOpt<T> = { required: false; defaultValue: never };
@@ -17,9 +14,9 @@ type PropDefVal<T> = { required: false; defaultValue: T };
 
 type PropDef<T> = PropDefReq<T> | PropDefOpt<T> | PropDefVal<T>;
 type PropsDef = Record<string, PropDef<unknown>>;
-type Prettify<T extends {}> = { [K in keyof T]: T[K] };
+type Prettify<T extends {}> = T; //{ [K in keyof T]: T[K] };
 
-type PropsType1<T extends PropsDef> = Prettify<
+type PropsType<T extends PropsDef> = Prettify<
   {
     [K in keyof T as T[K] extends PropDefReq<any>
       ? K
@@ -37,26 +34,21 @@ type PropsType1<T extends PropsDef> = Prettify<
     }
 >;
 
-type PropsType2<T extends PropsDef> = Prettify<
-  {
-    [K in keyof T as T[K] extends PropDefReq<any>
-      ? K
-      : never]: T[K] extends PropDefReq<infer U> ? U : never;
-  } &
-    {
-      [K in keyof T as T[K] extends PropDefOpt<any>
-        ? K
-        : never]?: T[K] extends PropDefOpt<infer U> ? U : never;
-    } &
-    {
-      [K in keyof T as T[K] extends PropDefVal<any>
-        ? K
-        : never]: T[K] extends PropDefVal<infer U> ? U : never;
-    }
->;
-type Modifier<A1 extends any[], A2 extends any[]> = (
-  fn: (...args: A1) => () => VNode
-) => (...args: A2) => () => VNode;
+type DefaultsType<T extends PropsDef> = {
+  [K in keyof T as T[K] extends PropDefVal<any>
+    ? K
+    : never]: T[K] extends PropDefVal<infer U> ? U : never;
+};
+
+// TODO!!!!!!!
+interface PropsConfig<P extends Props, D extends {}> {
+  validateProps?: (nextProps: P, oldProps: P) => null | Error;
+  defaults: D;
+}
+
+// === constants =====================================================
+
+const symbolProps = Symbol('props');
 
 // === local data ====================================================
 
@@ -78,55 +70,61 @@ function opt(defaultValue?: any): any {
 
 function props<T extends PropsDef>(
   propsDef: T
-): Modifier<[PropsType1<T>], [PropsType2<T>]> {
-  return (fn: ComponentFunc<PropsType1<T>>) =>
-    fn as ComponentFunc<PropsType2<T>>;
+): PropsConfig<PropsType<T>, DefaultsType<T>> {
+  const defaults: any = {};
+
+  for (const key of Object.keys(propsDef)) {
+    if (hasOwn(propsDef[key], 'defaultValue')) {
+      defaults[key] = (propsDef[key] as any).defaultValue;
+    }
+  }
+
+  return { defaults };
 }
 
 function widget(name: string, main: ComponentFunc<{}>): ComponentFunc<{}>;
 
 function widget(
   name: string
-): <P extends Props, A extends any[]>(
-  modifier: Modifier<[P], A>
-) => (fn: (...args: A) => () => VNode) => ComponentFunc<P>;
-
-function widget(
-  name: string
-): <P extends Props, A1 extends any[], A2 extends any[]>(
-  modifier1: Modifier<[P], A1>,
-  modifier2: Modifier<A1, A2>
-) => (fn: (...args: A2) => () => VNode) => ComponentFunc<P>;
-
-function widget(
-  name: string
-): <P extends Props, A1 extends any[], A2 extends any[], A3 extends any[]>(
-  modifier1: Modifier<[P], A1>,
-  modifier2: Modifier<A1, A2>,
-  modifier3: Modifier<A2, A3>
-) => (fn: (...args: A3) => () => VNode) => ComponentFunc<P>;
+): <P extends Props, D extends Partial<P>>(
+  propsConfig: PropsConfig<P, D>
+) => (fn: (props: Prettify<P & D>) => () => VNode) => ComponentFunc<P>;
 
 function widget(name: string, arg2?: any): any {
   if (arguments.length > 1) {
     const ret = arg2.bind(null);
 
-    setName(ret, name);
+    Object.defineProperty(ret, 'name', {
+      value: name
+    });
+
     return ret;
   }
 
-  return (...modifiers: Modifier<unknown[], unknown[]>[]) => {
-    if (modifiers.length > 3) {
-      throw new Error('Too many modifiers');
-    }
+  return <P extends Props, D extends Partial<P>>(
+    propsConfig: PropsConfig<P, D>
+  ) => {
+    const defaults = propsConfig.defaults || {};
 
-    return (props: Props) => {
-      let result: any;
+    // TODO!!!!
+    return (fn: Function) => {
+      return (props: Props) => {
+        (props.constructor as any).__defaults = defaults;
 
-      modifiers.forEach((modifier, idx) => {
-        if (idx === 0) {
-          result = modifier;
+        for (const key of Object.keys(defaults)) {
+          if (props[key] === undefined) {
+            props[key] = defaults[key];
+          }
         }
-      });
+
+        return fn(props);
+      };
     };
   };
+}
+
+// === utilities =====================================================
+
+function hasOwn(subj: any, propName: string) {
+  return subj != null && Object.prototype.hasOwnProperty.call(subj, propName);
 }

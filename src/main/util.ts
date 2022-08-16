@@ -4,8 +4,6 @@ import type { Component, Props, RefObject } from 'js-widgets';
 
 export { classes, component, createRef, createRefFor, setName };
 
-export * from './widget';
-
 // === local data ====================================================
 
 const hasOwn = {}.hasOwnProperty;
