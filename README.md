@@ -43,10 +43,10 @@ function Counter(p: {
   name?: string; //
   initialCount?: number;
 }) {
-  preset(p, () => ({
+  preset(p, {
     initialCount: 0,
     name: 'Counter'
-  }));
+  });
 
   const [s, set] = state({ count: p.initialCount });
   const increment = () => set.count((it) => it + 1);
@@ -71,10 +71,10 @@ function Counter(p: {
   name?: string; //
   initialCount?: number;
 }) {
-  preset(p, () => ({
+  preset(p, {
     name: 'Counter',
     initialCount: 0
-  }));
+  });
 
   const [s, set] = state({ count: p.initialCount });
   const increment = () => set.count((it) => it + 1);
